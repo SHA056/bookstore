@@ -6,6 +6,7 @@ import (
 
 	"github.com/SHA056/bookstore/users_api/domain/users"
 	"github.com/SHA056/bookstore/users_api/services"
+	"github.com/SHA056/bookstore/users_api/utils/errors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,12 +19,15 @@ func CreateUser(c *gin.Context) {
 	fmt.Println(user)
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
-		fmt.Println(err.Error())
+		restErr := errors.NewBadRequestError("invalid json body")
+		c.JSON(restErr.Status, restErr)
+		return
 	}
-	fmt.Println(user)
+
 	result, saveError := services.CreateUser(user)
 	if saveError != nil {
-		fmt.Println(saveError.Error())
+		c.JSON(saveError.Status, saveError)
+		// fmt.Println(saveError.Error)
 		return
 	}
 	c.JSON(http.StatusCreated, result)
