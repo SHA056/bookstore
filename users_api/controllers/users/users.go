@@ -3,6 +3,7 @@ package users
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/SHA056/bookstore/users_api/domain/users"
 	"github.com/SHA056/bookstore/users_api/services"
@@ -11,6 +12,12 @@ import (
 )
 
 func GetUser(c *gin.Context) {
+	userId, userErr := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userErr != nil {
+		err := errors.NewBadRequestError("user id should be a number")
+		c.JSON(err.Status, err)
+		return
+	}
 	c.String(http.StatusNotImplemented, "implement me!")
 }
 

@@ -1,14 +1,27 @@
 package services
 
 import (
-	"net/http"
-
 	"github.com/SHA056/bookstore/users_api/domain/users"
 	"github.com/SHA056/bookstore/users_api/utils/errors"
 )
 
-func CreateUser(user users.User) (*users.User, *errors.RestErr) {
-	return nil, &errors.RestErr{
-		Status: http.StatusInternalServerError,
+func GetUser(userId int64) (*users.User, *errors.RestErr) {
+	result := &users.User{Id: userId}
+	if err := result.Get(); err != nil {
+		return nil, err
 	}
+	return result, nil
+}
+
+func CreateUser(user users.User) (*users.User, *errors.RestErr) {
+	err := user.Validate()
+	if err != nil {
+		return nil, errors.NewBadRequestError(err.Message)
+	}
+
+	if err := user.Save(); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
