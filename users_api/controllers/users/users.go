@@ -18,7 +18,14 @@ func GetUser(c *gin.Context) {
 		c.JSON(err.Status, err)
 		return
 	}
-	c.String(http.StatusNotImplemented, "implement me!")
+
+	user, getErr := services.GetUser(userId)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		// fmt.Println(getErr.Error)
+		return
+	}
+	c.JSON(http.StatusCreated, user)
 }
 
 func CreateUser(c *gin.Context) {
